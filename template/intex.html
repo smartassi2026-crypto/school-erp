@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart School CRM</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+  <style>
+    :root{
+      --blue:#2563EB;
+      --violet:#7C3AED;
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#172033;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --danger:#ef4444;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --radius:20px;
+      --shadow:0 18px 45px rgba(15,23,42,.10);
+      --gradient:linear-gradient(135deg,#2563EB,#7C3AED);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    h1,h2,h3,h4{font-family:Sora,sans-serif;margin:0}
+    button,input,select,textarea{font-family:Inter,sans-serif}
+    .mono{font-family:"JetBrains Mono",monospace}
+    .hidden{display:none!important}
+    .login{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      background:white;
+    }
+    .login-art{
+      background:
+        radial-gradient(circle at 20% 20%,rgba(255,255,255,.24),transparent 28%),
+        radial-gradient(circle at 80% 70%,rgba(255,255,255,.20),transparent 30%),
+        var(--gradient);
+      color:white;
+      padding:60px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:24px;
+    }
+    .logo-mark{
+      width:64px;height:64px;border-radius:22px;
+      background:rgba(255,255,255,.20);
+      display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.30);
+      box-shadow:var(--shadow);
+    }
+    .login-art h1{font-size:48px;line-height:1.05}
+    .login-art p{font-size:18px;line-height:1.7;max-width:560px;color:rgba(255,255,255,.88)}
+    .login-box{
+      display:grid;place-items:center;padding:32px;
+    }
+    .login-card{
+      width:100%;max-width:430px;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:32px;
+    }
+    .field{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+    label{font-size:13px;font-weight:700;color:#334155}
+    input,select,textarea{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      outline:none;
+      background:white;
+    }
+    textarea{min-height:90px;resize:vertical}
+    input:focus,select:focus,textarea:focus{
+      border-color:#7C3AED;
+      box-shadow:0 0 0 4px rgba(124,58,237,.10);
+    }
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:12px 16px;
+      font-weight:800;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+    .btn.primary{background:var(--gradient);color:white}
+    .btn.danger{background:#fee2e2;color:#991b1b}
+    .btn.success{background:#dcfce7;color:#166534}
+    .btn.small{padding:8px 10px;font-size:12px;border-radius:10px}
+    .app{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:290px 1fr;
+    }
+    aside{
+      background:var(--gradient);
+      color:white;
+      padding:22px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+    }
+    .brand{
+      display:flex;gap:12px;align-items:center;
+      margin-bottom:22px;
+    }
+    .brand .logo-mark{width:48px;height:48px;border-radius:16px}
+    .brand h2{font-size:19px}
+    .nav{
+      display:flex;flex-direction:column;gap:6px;
+    }
+    .nav button{
+      border:0;
+      width:100%;
+      text-align:left;
+      color:rgba(255,255,255,.90);
+      background:transparent;
+      border-radius:14px;
+      padding:11px 12px;
+      font-weight:750;
+      cursor:pointer;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .nav button.active,.nav button:hover{background:rgba(255,255,255,.16);color:white}
+    main{padding:22px;overflow:hidden}
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;
+      background:white;border:1px solid var(--line);
+      border-radius:22px;padding:14px 18px;box-shadow:0 10px 30px rgba(15,23,42,.06);
+      margin-bottom:18px;
+      gap:12px;
+    }
+    .topbar h1{font-size:24px}
+    .role-pill{padding:8px 12px;border-radius:999px;background:#eef2ff;color:#3730a3;font-weight:800}
+    .grid{display:grid;gap:16px}
+    .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .stat{
+      color:white;border-radius:22px;padding:18px;box-shadow:var(--shadow);min-height:130px;
+    }
+    .stat h3{font-size:14px;color:rgba(255,255,255,.86);margin-bottom:12px}
+    .stat .num{font-size:30px;font-family:Sora;font-weight:800}
+    .panels{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px}
+    .card{
+      background:white;border:1px solid var(--line);
+      border-radius:22px;padding:18px;box-shadow:0 12px 32px rgba(15,23,42,.06);
+      overflow:hidden;
+    }
+    .card h3{font-size:17px;margin-bottom:12px}
+    .quick{grid-template-columns:repeat(5,minmax(0,1fr));margin-top:16px}
+    .quick .btn{min-height:72px;flex-direction:column;background:white;border:1px solid var(--line)}
+    .toolbar{
+      display:grid;
+      grid-template-columns:1.3fr repeat(3,170px) auto auto auto;
+      gap:10px;
+      margin-bottom:14px;
+    }
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:#f8fafc;color:#475569;font-size:12px;text-transform:uppercase}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .modal{
+      position:fixed;inset:0;background:rgba(15,23,42,.55);
+      display:grid;place-items:center;z-index:30;padding:18px;
+    }
+    .modal-card{
+      width:min(920px,96vw);max-height:90vh;overflow:auto;
+      background:white;border-radius:24px;padding:20px;box-shadow:var(--shadow);
+    }
+    .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .print-area{
+      background:white;color:#111827;
+    }
+    .id-card{
+      width:340px;height:540px;border-radius:24px;overflow:hidden;
+      border:1px solid #d1d5db;background:white;
+      box-shadow:0 8px 24px rgba(15,23,42,.12);
+      display:inline-flex;flex-direction:column;margin:10px;vertical-align:top;
+    }
+    .id-top{background:var(--gradient);color:white;text-align:center;padding:16px}
+    .id-photo{width:92px;height:92px;border-radius:18px;object-fit:cover;border:4px solid white;margin:14px auto 8px;display:block}
+    .id-body{padding:14px;text-align:center;flex:1}
+    .id-body p{margin:6px 0;font-size:13px}
+    .id-back{text-align:left;padding:16px;font-size:12px}
+    .qr{margin:auto;display:block}
+    .receipt,.certificate,.marksheet,.admit{
+      width:794px;min-height:1123px;margin:0 auto;background:white;
+      border:1px solid #e5e7eb;padding:42px;color:#111827;
+    }
+    .certificate{min-height:794px;width:1123px;background:linear-gradient(135deg,#eff6ff,#ffffff);border:12px solid #2563eb;text-align:center}
+    .watermark{position:relative}
+    .watermark:before{
+      content:"Smart School CRM";
+      position:absolute;inset:0;display:grid;place-items:center;
+      font-family:Sora;font-size:56px;color:rgba(37,99,235,.07);
+      transform:rotate(-25deg);pointer-events:none;
+    }
+    .toast{
+      position:fixed;right:18px;bottom:18px;background:#0f172a;color:white;
+      padding:14px 16px;border-radius:16px;box-shadow:var(--shadow);z-index:50;
+    }
+    .mobile-menu{display:none}
+    @media(max-width:1100px){
+      .app{grid-template-columns:1fr}
+      aside{position:fixed;left:-310px;z-index:20;width:290px;transition:.25s}
+      aside.open{left:0}
+      .mobile-menu{display:inline-flex}
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .panels,.quick{grid-template-columns:1fr}
+      .toolbar{grid-template-columns:1fr 1fr}
+      .form-grid{grid-template-columns:1fr}
+      .login{grid-template-columns:1fr}
+      .login-art{display:none}
+    }
+    @media(max-width:650px){
+      main{padding:12px}
+      .stats{grid-template-columns:1fr}
+      .topbar{align-items:flex-start;flex-direction:column}
+      table{font-size:12px}
+      th,td{padding:9px}
+      .toolbar{grid-template-columns:1fr}
+    }
+    @media print{
+      body{background:white}
+      aside,.topbar,.no-print,.toolbar,.section-title,.toast{display:none!important}
+      main{padding:0}
+      .card{box-shadow:none;border:0}
+      .print-area,.id-card,.receipt,.certificate,.marksheet,.admit{
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+      }
+      .id-card{page-break-inside:avoid}
+      @page{size:A4;margin:8mm}
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    const API = "";
+    const DEFAULT_AVATAR = "data:image/svg+xml;base64," + btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="100%" height="100%" fill="#eef2ff"/><circle cx="100" cy="78" r="42" fill="#7c3aed"/><rect x="38" y="132" width="124" height="52" rx="26" fill="#2563eb"/></svg>`);
+
+    const modules = [
+      ["dashboard","Dashboard","layout-dashboard"],
+      ["admission","Student Admission","user-plus"],
+      ["student360","Student 360 Profile","scan-face"],
+      ["teachers","Teachers / Staff","users"],
+      ["departments","Departments / Classes","building-2"],
+      ["subjects","Subjects","book-open"],
+      ["attendance","Attendance","calendar-check"],
+      ["fees","Fees & Invoice","receipt"],
+      ["exam","Exam & Marks","graduation-cap"],
+      ["certificate","Certificate","award"],
+      ["idcard","ID Card","badge"],
+      ["transport","Transport","bus"],
+      ["library","Library","library"],
+      ["hostel","Hostel","bed"],
+      ["payroll","Payroll / Teacher Salary","wallet"],
+      ["leaves","Leaves","calendar-minus"],
+      ["notice","Notice / Announcement","megaphone"],
+      ["whatsapp","WhatsApp Messages","message-circle"],
+      ["public","Public Portal","globe"],
+      ["olddata","Old Data Upload","upload"],
+      ["users","Users & Roles","shield-check"],
+      ["settings","Settings","settings"],
+      ["account","Account / Storage","database"],
+      ["reports","Reports","bar-chart-3"]
+    ];
+
+    const endpointMap = {
+      admission:"students",
+      student360:"students",
+      teachers:"teachers",
+      departments:"departments",
+      subjects:"subjects",
+      attendance:"attendance",
+      fees:"fees",
+      exam:"exams",
+      certificate:"certificates",
+      transport:"transport",
+      library:"library",
+      hostel:"hostel",
+      payroll:"payroll",
+      users:"users"
+    };
+
+    const state = {
+      route:"dashboard",
+      user:JSON.parse(localStorage.getItem("ssc_user") || "null"),
+      students:[],
+      teachers:[],
+      settings:{school_name:"Smart School CRM",session:"2026-27",voice_enabled:true,public_portal_enabled:true,payment_gateway_enabled:false}
+    };
+
+    function $(id){return document.getElementById(id)}
+    function money(n){return "₹" + Number(n || 0).toLocaleString("en-IN")}
+    function uid(prefix){return prefix + "-" + Date.now().toString(36).toUpperCase().slice(-6)}
+    function today(){return new Date().toISOString().slice(0,10)}
+    function toast(msg){
+      const t=document.createElement("div");
+      t.className="toast";
+      t.textContent=msg;
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(),2600);
+    }
+    function speak(msg){
+      if(!state.settings.voice_enabled) return;
+      try{speechSynthesis.speak(new SpeechSynthesisUtterance(msg));}catch(e){}
+    }
+    async function api(path, opts={}){
+      const res = await fetch(API + path, {
+        ...opts,
+        headers: {"Content-Type":"application/json", ...(opts.headers||{})}
+      });
+      const data = await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error(data.error || "API error");
+      return data;
+    }
+    function icon(name){return `<i data-lucide="${name}" width="18"></i>`}
+
+    function render(){
+      if(!state.user) return renderLogin();
+      document.body.innerHTML = `<div id="root"></div>`;
+      $("root").innerHTML = `
+        <div class="app">
+          <aside id="sidebar">
+            <div class="brand">
+              <div class="logo-mark">${icon("school")}</div>
+              <div><h2>Smart School CRM</h2><div style="font-size:12px;opacity:.85">Premium School ERP</div></div>
+            </div>
+            <div class="nav">
+              ${modules.map(m=>`<button class="${state.route===m[0]?'active':''}" onclick="go('${m[0]}')">${icon(m[2])}<span>${m[1]}</span></button>`).join("")}
+            </div>
+          </aside>
+          <main>
+            <div class="topbar no-print">
+              <button class="btn mobile-menu" onclick="$('sidebar').classList.toggle('open')">${icon("menu")}</button>
+              <div>
+                <h1>${modules.find(m=>m[0]===state.route)?.[1] || "Dashboard"}</h1>
+                <div style="color:var(--muted);font-size:13px">Session ${state.settings.session || "2026-27"}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span class="role-pill">${state.user.role}</span>
+                <button class="btn danger" onclick="logout()">${icon("log-out")} Logout</button>
+              </div>
+            </div>
+            <div id="view"></div>
+          </main>
+        </div>
+      `;
+      routeView();
+      lucide.createIcons();
+    }
+
+    function renderLogin(){
+      document.body.innerHTML = `<div id="root"></div>`;
+      $("root").innerHTML=`
+        <div class="login">
+          <div class="login-art">
+            <div class="logo-mark">${icon("school")}</div>
+            <h1>Smart School CRM</h1>
+            <p>Advanced School ERP for admission, attendance, fees, exams, ID cards, certificates, payroll, transport, library, hostel, and public student portal.</p>
+          </div>
+          <div class="login-box">
+            <form class="login-card" onsubmit="login(event)">
+              <h2>Login</h2>
+              <p style="color:var(--muted)">Use admin@smartschool.com / password123</p>
+              <div class="field"><label>Email / ID</label><input id="email" value="admin@smartschool.com" required></div>
+              <div class="field"><label>Password / PIN</label><input id="password" type="password" value="password123" required></div>
+              <button class="btn primary" style="width:100%;margin-top:10px">${icon("log-in")} Login</button>
+            </form>
+          </div>
+        </div>`;
+      lucide.createIcons();
+    }
+
+    async function login(e){
+      e.preventDefault();
+      try{
+        const data = await api("/api/login",{method:"POST",body:JSON.stringify({email:$("email").value,password:$("password").value})});
+        state.user=data.user;
+        localStorage.setItem("ssc_user",JSON.stringify(data.user));
+        localStorage.setItem("ssc_token",data.token);
+        render();
+      }catch(err){toast(err.message)}
+    }
+    function logout(){
+      localStorage.removeItem("ssc_user");
+      localStorage.removeItem("ssc_token");
+      state.user=null;
+      renderLogin();
+    }
+    function go(route){
+      state.route=route;
+      if($("sidebar")) $("sidebar").classList.remove("open");
+      render();
+    }
+
+    async function loadCore(){
+      try{
+        const [students,teachers,settings] = await Promise.all([
+          api("/api/students"),
+          api("/api/teachers"),
+          api("/api/settings")
+        ]);
+        state.students = students.data || [];
+        state.teachers = teachers.data || [];
+        state.settings = {...state.settings,...(settings.data || {})};
+      }catch(e){}
+    }
+
+    async function routeView(){
+      await loadCore();
+      if(state.route==="dashboard") return dashboard();
+      if(state.route==="admission") return admission();
+      if(state.route==="student360") return student360();
+      if(state.route==="public") return publicPortal();
+      if(state.route==="idcard") return idCardModule();
+      if(state.route==="fees") return feesModule();
+      if(state.route==="attendance") return attendanceModule();
+      if(state.route==="exam") return examModule();
+      if(state.route==="certificate") return certificateModule();
+      if(state.route==="olddata") return oldDataModule();
+      if(state.route==="settings") return settingsModule();
+      if(state.route==="account") return accountModule();
+      return genericModule(state.route);
+    }
+
+    async function dashboard(){
+      let stats={};
+      try{stats=(await api("/api/dashboard/stats")).data || {}}catch(e){}
+      const cards=[
+        ["Total Students",stats.total_students || state.students.length,"linear-gradient(135deg,#2563eb,#38bdf8)"],
+        ["Total Teachers",stats.total_teachers || state.teachers.length,"linear-gradient(135deg,#7c3aed,#ec4899)"],
+        ["Today Attendance",stats.today_attendance || 0,"linear-gradient(135deg,#16a34a,#22c55e)"],
+        ["Monthly Collection",money(stats.monthly_collection || 0),"linear-gradient(135deg,#f59e0b,#f97316)"],
+        ["Pending Fees",money(stats.pending_fees || 0),"linear-gradient(135deg,#ef4444,#fb7185)"],
+        ["New Admissions",stats.new_admissions || 0,"linear-gradient(135deg,#06b6d4,#3b82f6)"],
+        ["Active Classes",stats.active_classes || 0,"linear-gradient(135deg,#8b5cf6,#6366f1)"],
+        ["Upcoming Exams",stats.upcoming_exams || 0,"linear-gradient(135deg,#0f766e,#14b8a6)"]
+      ];
+      $("view").innerHTML=`
+        <div class="grid stats">${cards.map(c=>`<div class="stat" style="background:${c[2]}"><h3>${c[0]}</h3><div class="num">${c[1]}</div></div>`).join("")}</div>
+        <div class="grid panels">
+          <div class="card"><h3>Admission Trend</h3><canvas id="admissionChart"></canvas></div>
+          <div class="card"><h3>Fee Collection</h3><canvas id="feeChart"></canvas></div>
+          <div class="card"><h3>Attendance</h3><canvas id="attChart"></canvas></div>
+        </div>
+        <div class="grid panels">
+          <div class="card"><h3>Class-wise Students</h3><div id="classList"></div></div>
+          <div class="card"><h3>Fee Due List</h3><div id="dueList"></div></div>
+          <div class="card"><h3>Recent Activity / Logs</h3><div id="logs"></div></div>
+        </div>
+        <div class="grid quick">
+          ${["New Admission","Take Attendance","Collect Fee","Generate ID Card","Generate Receipt","Generate Admit Card","Generate Marksheet","Generate Certificate","Old Data Upload"].map(x=>`<button class="btn" onclick="quickAction('${x}')">${icon("zap")} ${x}</button>`).join("")}
+        </div>
+      `;
+      new Chart($("admissionChart"),{type:"bar",data:{labels:["Jan","Feb","Mar","Apr","May","Jun"],datasets:[{label:"Admissions",data:stats.admission_trend || [8,13,16,21,18,25]}]}});
+      new Chart($("feeChart"),{type:"line",data:{labels:["Jan","Feb","Mar","Apr","May","Jun"],datasets:[{label:"Collection",data:stats.fee_collection_chart || [12000,24000,21000,38000,42000,53000]}]}});
+      new Chart($("attChart"),{type:"doughnut",data:{labels:["Present","Absent","Late","Leave"],datasets:[{data:stats.attendance_chart || [76,12,7,5]}]}});
+      $("classList").innerHTML=(stats.class_wise || [{class:"Class 1",count:22},{class:"Class 2",count:30}]).map(x=>`<p><b>${x.class}</b> — ${x.count}</p>`).join("");
+      $("dueList").innerHTML=(stats.due_list || []).slice(0,6).map(x=>`<p><b>${x.name}</b> ${money(x.due)}</p>`).join("") || "<p>No due records.</p>";
+      $("logs").innerHTML=(stats.recent_activities || ["System ready","Dashboard loaded","Admission module active"]).map(x=>`<p>${x}</p>`).join("");
+      lucide.createIcons();
+    }
+    function quickAction(x){
+      const map={"New Admission":"admission","Take Attendance":"attendance","Collect Fee":"fees","Generate ID Card":"idcard","Generate Receipt":"fees","Generate Admit Card":"exam","Generate Marksheet":"exam","Generate Certificate":"certificate","Old Data Upload":"olddata"};
+      go(map[x] || "dashboard");
+    }
+
+    function toolbar(route){
+      return `
+        <div class="toolbar no-print">
+          <input id="searchBox" placeholder="Search records..." oninput="filterTable()">
+          <select><option>All Status</option><option>Active</option><option>Paid</option><option>Due</option></select>
+          <input type="date">
+          <input type="date">
+          <button class="btn" onclick="window.print()">${icon("file-text")} Export PDF</button>
+          <button class="btn" onclick="exportExcel('${route}')">${icon("sheet")} Export Excel</button>
+          <button class="btn primary" onclick="openGenericModal('${route}')">${icon("plus")} Add</button>
+        </div>
+      `;
+    }
+
+    function filterTable(){
+      const q=($("searchBox")?.value||"").toLowerCase();
+      document.querySelectorAll("tbody tr").forEach(tr=>{
+        tr.style.display=tr.textContent.toLowerCase().includes(q)?"":"none";
+      });
+    }
+    function exportExcel(name){
+      const rows=[...document.querySelectorAll("table tr")].map(tr=>[...tr.children].map(td=>`"${td.innerText.replaceAll('"','""')}"`).join(",")).join("\n");
+      const blob=new Blob([rows],{type:"text/csv"});
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);
+      a.download=name+".csv";
+      a.click();
+    }
+
+    function genericModule(route){
+      const ep=endpointMap[route] || route;
+      api(`/api/${ep}`).then(res=>{
+        const data=res.data || [];
+        $("view").innerHTML=`
+          <div class="section-title"><h2>${modules.find(m=>m[0]===route)?.[1]}</h2></div>
+          ${toolbar(route)}
+          <div class="card">
+            <div style="overflow:auto">
+              <table>
+                <thead><tr><th>ID</th><th>Name / Title</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+                <tbody>
+                  ${data.map(r=>`<tr>
+                    <td class="mono">${r.id || ""}</td>
+                    <td>${r.name || r.title || r.subject_name || r.class_name || r.staff_id || "Record"}</td>
+                    <td>${r.status || "Active"}</td>
+                    <td>${(r.created_at || "").slice(0,10)}</td>
+                    <td class="actions">
+                      <button class="btn small" onclick='openGenericModal("${route}",${JSON.stringify(r).replaceAll("'","&apos;")})'>${icon("edit")} Edit</button>
+                      <button class="btn small danger" onclick='deleteRecord("${ep}","${r.id}")'>${icon("trash")} Delete</button>
+                    </td>
+                  </tr>`).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+        lucide.createIcons();
+      }).catch(e=>toast(e.message));
+    }
+
+    function openGenericModal(route,row={}){
+      const ep=endpointMap[route] || route;
+      modal(`
+        <div class="modal-head"><h3>${row.id?"Edit":"Add"} Record</h3><button class="btn danger" onclick="closeModal()">Close</button></div>
+        <form onsubmit='saveGeneric(event,"${ep}","${row.id||""}")'>
+          <div class="form-grid">
+            <div class="field"><label>Name / Title</label><input name="name" value="${row.name || row.title || ""}" required></div>
+            <div class="field"><label>Status</label><select name="status"><option ${row.status==="Active"?"selected":""}>Active</option><option ${row.status==="Inactive"?"selected":""}>Inactive</option></select></div>
+            <div class="field"><label>Amount / Value</label><input name="amount" value="${row.amount || row.salary || ""}"></div>
+            <div class="field"><label>Date</label><input type="date" name="date" value="${row.date || today()}"></div>
+            <div class="field" style="grid-column:1/-1"><label>Details</label><textarea name="details">${row.details || row.content || ""}</textarea></div>
+          </div>
+          <button class="btn primary">${icon("save")} Save</button>
+        </form>
+      `);
+    }
+    async function saveGeneric(e,ep,id){
+      e.preventDefault();
+      const payload=Object.fromEntries(new FormData(e.target).entries());
+      if(payload.name && ["exams","certificates","notices"].includes(ep)) payload.title=payload.name;
+      const method=id?"PUT":"POST";
+      const url=id?`/api/${ep}/${id}`:`/api/${ep}`;
+      await api(url,{method,body:JSON.stringify(payload)});
+      closeModal();toast("Record saved");routeView();
+    }
+    async function deleteRecord(ep,id){
+      if(!confirm("Delete this record?")) return;
+      await api(`/api/${ep}/${id}`,{method:"DELETE"});
+      toast("Record deleted");routeView();
+    }
+    function modal(html){
+      const m=document.createElement("div");
+      m.className="modal";
+      m.id="modal";
+      m.innerHTML=`<div class="modal-card">${html}</div>`;
+      document.body.appendChild(m);
+      lucide.createIcons();
+    }
+    function closeModal(){ $("modal")?.remove(); }
+
+    function admission(){
+      $("view").innerHTML=`
+        <div class="section-title"><h2>Student Admission</h2><button class="btn primary" onclick="openAdmissionModal()">${icon("user-plus")} New Admission</button></div>
+        ${toolbar("admission")}
+        <div class="card">
+          <div style="overflow:auto">
+          <table>
+            <thead><tr><th>Photo</th><th>Admission No</th><th>Name</th><th>Class</th><th>Mobile</th><th>Fee</th><th>Actions</th></tr></thead>
+            <tbody>${state.students.map(s=>studentRow(s)).join("")}</tbody>
+          </table>
+          </div>
+        </div>`;
+      lucide.createIcons();
+    }
+    function studentRow(s){
+      return `<tr>
+        <td><img src="${s.photo || DEFAULT_AVATAR}" style="width:42px;height:42px;border-radius:12px;object-fit:cover"></td>
+        <td class="mono">${s.admission_no || ""}</td>
+        <td>${s.name || ""}<br><small>${s.father_name || ""}</small></td>
+        <td>${s.class_name || s.class_id || ""} / ${s.section_id || ""}</td>
+        <td>${s.mobile || ""}</td>
+        <td>${money(s.admission_fee)} / ${money(s.monthly_fee)}</td>
+        <td class="actions">
+          <button class="btn small" onclick='openAdmissionModal(${JSON.stringify(s).replaceAll("'","&apos;")})'>${icon("edit")} Edit</button>
+          <button class="btn small" onclick='printReceipt(${JSON.stringify(s).replaceAll("'","&apos;")})'>${icon("receipt")} Receipt</button>
+          <button class="btn small" onclick='printIdCard(${JSON.stringify(s).replaceAll("'","&apos;")},"student")'>${icon("badge")} ID</button>
+          <button class="btn small danger" onclick='deleteRecord("students","${s.id}")'>${icon("trash")} Delete</button>
+        </td>
+      </tr>`;
+    }
+    function openAdmissionModal(s={}){
+      modal(`
+        <div class="modal-head"><h3>${s.id?"Edit Student":"New Student Admission"}</h3><button class="btn danger" onclick="closeModal()">Close</button></div>
+        <form onsubmit='saveAdmission(event,"${s.id || ""}")'>
+          <div class="form-grid">
+            ${[
+              ["name","Student name"],["father_name","Father name"],["mother_name","Mother name"],["dob","DOB","date"],["gender","Gender"],["blood_group","Blood group"],
+              ["religion","Religion"],["category","Category"],["aadhaar","Aadhaar"],["mobile","Mobile"],["whatsapp","WhatsApp number"],["email","Email","email"],
+              ["address","Full address"],["class_id","Class"],["section_id","Section"],["roll_no","Roll number"],["previous_school","Previous school"],["emergency_contact","Emergency contact"],
+              ["admission_fee","Admission fee","number"],["monthly_fee","Monthly fee","number"],["password_pin","Student portal password/PIN"]
+            ].map(f=>`<div class="field"><label>${f[1]}</label><input type="${f[2]||"text"}" name="${f[0]}" value="${s[f[0]] || ""}"></div>`).join("")}
+            <div class="field"><label>Transport required</label><select name="transport_required"><option value="false">No</option><option value="true" ${s.transport_required?"selected":""}>Yes</option></select></div>
+            <div class="field"><label>Library required</label><select name="library_required"><option value="false">No</option><option value="true" ${s.library_required?"selected":""}>Yes</option></select></div>
+            <div class="field"><label>Hostel required</label><select name="hostel_required"><option value="false">No</option><option value="true" ${s.hostel_required?"selected":""}>Yes</option></select></div>
+            <div class="field"><label>Payment Mode</label><select name="payment_mode" onchange="toggleUpi(this.value)"><option>Cash</option><option>UPI</option></select></div>
+            <div class="field"><label>Student photo</label><input type="file" accept="image/*" onchange="resizePhoto(event)"><input type="hidden" name="photo" id="photoBase" value="${s.photo || DEFAULT_AVATAR}"></div>
+            <div class="field hidden" id="upiBox"><label>UPI QR</label><img src="${state.settings.upi_qr || DEFAULT_AVATAR}" style="width:120px;height:120px;object-fit:contain"></div>
+          </div>
+          <button class="btn primary">${icon("save")} Save Admission</button>
+        </form>`);
+    }
+    function toggleUpi(v){ $("upiBox")?.classList.toggle("hidden",v!=="UPI"); }
+    function resizePhoto(e){
+      const file=e.target.files[0]; if(!file) return;
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement("canvas");
+        canvas.width=200;canvas.height=200;
+        const ctx=canvas.getContext("2d");
+        ctx.fillStyle="#fff";ctx.fillRect(0,0,200,200);
+        const size=Math.min(img.width,img.height);
+        ctx.drawImage(img,(img.width-size)/2,(img.height-size)/2,size,size,0,0,200,200);
+        $("photoBase").value=canvas.toDataURL("image/jpeg",.82);
+      };
+      img.src=URL.createObjectURL(file);
+    }
+    async function saveAdmission(e,id){
+      e.preventDefault();
+      const p=Object.fromEntries(new FormData(e.target).entries());
+      p.admission_no=p.admission_no || uid("ADM");
+      p.status="Active";
+      p.transport_required=p.transport_required==="true";
+      p.library_required=p.library_required==="true";
+      p.hostel_required=p.hostel_required==="true";
+      const res=await api(id?`/api/students/${id}`:"/api/students",{method:id?"PUT":"POST",body:JSON.stringify(p)});
+      const saved=res.data || p;
+      await api("/api/fees",{method:"POST",body:JSON.stringify({
+        student_id:saved.id,receipt_no:uid("REC"),fee_type:"Admission",amount:Number(p.admission_fee||0),paid:Number(p.admission_fee||0),due:0,mode:p.payment_mode,status:"Paid",payment_date:today()
+      })});
+      closeModal();
+      toast("Admission saved successfully");
+      speak("Admission saved successfully.");
+      routeView();
+    }
+
+    function student360(){
+      const first=state.students[0];
+      $("view").innerHTML=`
+        <div class="card no-print">
+          <div class="field"><label>Search by Student ID / Admission No / Mobile / Name</label>
+          <input id="s360search" oninput="render360()" placeholder="Type to search student"></div>
+        </div>
+        <div id="s360"></div>`;
+      if(first) setTimeout(()=>render360(),0);
+    }
+    function findStudent(q){
+      q=(q||"").toLowerCase();
+      return state.students.find(s=>[s.id,s.admission_no,s.mobile,s.name].join(" ").toLowerCase().includes(q)) || state.students[0];
+    }
+    function render360(){
+      const s=findStudent($("s360search")?.value || "");
+      if(!s){$("s360").innerHTML=`<div class="card">No student found.</div>`;return;}
+      $("s360").innerHTML=student360Card(s);
+      makeQR(`qr360-${s.id}`,s.admission_no || s.id);
+      lucide.createIcons();
+    }
+    function student360Card(s){
+      return `<div class="card print-area">
+        <div style="display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:start">
+          <div><img src="${s.photo || DEFAULT_AVATAR}" style="width:160px;height:160px;border-radius:24px;object-fit:cover"><canvas id="qr360-${s.id}" class="qr"></canvas></div>
+          <div>
+            <h2>${s.name}</h2>
+            <p class="mono">${s.admission_no}</p>
+            <p><b>Father:</b> ${s.father_name || ""} &nbsp; <b>Mother:</b> ${s.mother_name || ""}</p>
+            <p><b>Class:</b> ${s.class_id || ""} <b>Section:</b> ${s.section_id || ""} <b>Roll:</b> ${s.roll_no || ""}</p>
+            <p><b>Mobile:</b> ${s.mobile || ""} <b>DOB:</b> ${s.dob || ""} <b>Blood:</b> ${s.blood_group || ""}</p>
+            <p><b>Address:</b> ${s.address || ""}</p>
+            <div class="actions no-print">
+              <button class="btn" onclick="window.print()">${icon("printer")} Print Student 360 PDF</button>
+              <button class="btn" onclick='printIdCard(${JSON.stringify(s).replaceAll("'","&apos;")},"student")'>Generate ID Card</button>
+              <button class="btn" onclick='printReceipt(${JSON.stringify(s).replaceAll("'","&apos;")})'>Generate Receipt</button>
+              <button class="btn" onclick='printCertificate(${JSON.stringify(s).replaceAll("'","&apos;")})'>Generate Certificate</button>
+              <button class="btn" onclick='printMarksheet(${JSON.stringify(s).replaceAll("'","&apos;")})'>Generate Marksheet</button>
+              <button class="btn" onclick='printAdmit(${JSON.stringify(s).replaceAll("'","&apos;")})'>Generate Admit Card</button>
+              <button class="btn success" onclick="readyWhatsApp('${s.whatsapp || s.mobile}','Admission confirmed for ${s.name}')">Send WhatsApp Message</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid panels" style="margin-top:18px">
+          <div class="card"><h3>Attendance Summary</h3><p>Present: 0 | Absent: 0 | Late: 0</p></div>
+          <div class="card"><h3>Fee Summary</h3><p>Paid: ${money(s.admission_fee)} | Due: ${money(0)}</p></div>
+          <div class="card"><h3>Activity Logs</h3><p>Admission created. ID card available. Receipt generated.</p></div>
+        </div>
+      </div>`;
+    }
+    function makeQR(id,text){
+      setTimeout(()=>{const c=$(id); if(c) QRCode.toCanvas(c,text,{width:96});},80);
+    }
+
+    function printIdCard(person,type){
+      const label=type==="teacher"?"Teacher / Staff":"Student";
+      modal(`
+        <div class="modal-head no-print"><h3>ID Card</h3><div class="actions"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn danger" onclick="closeModal()">Close</button></div></div>
+        <div class="print-area">
+          <div class="id-card">
+            <div class="id-top"><h3>${state.settings.school_name || "Smart School CRM"}</h3><small>${label}</small></div>
+            <img class="id-photo" src="${person.photo || DEFAULT_AVATAR}">
+            <div class="id-body">
+              <h3>${person.name}</h3>
+              <p class="mono">${person.admission_no || person.staff_id || person.id}</p>
+              <p>Class/Dept: ${person.class_id || person.department_id || ""}</p>
+              <p>Section/Subject: ${person.section_id || person.subject_id || ""}</p>
+              <p>Roll/Mobile: ${person.roll_no || person.mobile || ""}</p>
+              <canvas id="frontQR" class="qr"></canvas>
+            </div>
+          </div>
+          <div class="id-card">
+            <div class="id-top"><h3>Back Side</h3><small>Valid Session ${state.settings.session || ""}</small></div>
+            <div class="id-back">
+              <p><b>ID / Enrollment:</b> ${person.admission_no || person.staff_id || person.id}</p>
+              <p><b>Name:</b> ${person.name}</p>
+              <p><b>Guardian:</b> ${person.father_name || ""}</p>
+              <p><b>Mobile:</b> ${person.mobile || ""}</p>
+              <p><b>Emergency:</b> ${person.emergency_contact || ""}</p>
+              <p><b>Address:</b> ${person.address || ""}</p>
+              <canvas id="backQR" class="qr"></canvas>
+              <p><b>Issued:</b> ${today()}</p>
+              <p><b>Principal:</b> ${state.settings.principal_name || ""}</p>
+              <div style="display:flex;gap:18px;align-items:center;margin-top:10px">
+                ${state.settings.signature?`<img src="${state.settings.signature}" style="height:46px">`:"Signature"}
+                ${state.settings.stamp?`<img src="${state.settings.stamp}" style="height:58px">`:"Stamp"}
+              </div>
+            </div>
+          </div>
+        </div>`);
+      makeQR("frontQR",person.admission_no || person.staff_id || person.id);
+      makeQR("backQR",person.admission_no || person.staff_id || person.id);
+    }
+
+    function idCardModule(){
+      $("view").innerHTML=`
+        <div class="card no-print">
+          <h3>ID Card Generator</h3>
+          <div class="form-grid">
+            <div class="field"><label>Type</label><select id="idType"><option value="student">Student</option><option value="teacher">Teacher</option></select></div>
+            <div class="field"><label>Search by ID / Mobile / Name</label><input id="idSearch"></div>
+            <div class="field"><label>Design Variant</label><select><option>Classic Blue</option><option>Modern Rounded</option><option>Clean Minimal</option><option>Premium Gold</option><option>Reference Veridian-style card</option></select></div>
+            <div class="field"><label>Color</label><input type="color" value="#2563eb"></div>
+          </div>
+          <button class="btn primary" onclick="generateSelectedId()">Generate ID Card</button>
+        </div>
+        <div class="card"><h3>Students</h3><table><tbody>${state.students.map(s=>studentRow(s)).join("")}</tbody></table></div>`;
+      lucide.createIcons();
+    }
+    function generateSelectedId(){
+      const type=$("idType").value;
+      const q=$("idSearch").value.toLowerCase();
+      const list=type==="student"?state.students:state.teachers;
+      const p=list.find(x=>[x.id,x.admission_no,x.staff_id,x.mobile,x.name].join(" ").toLowerCase().includes(q)) || list[0];
+      if(!p) return toast("No record found");
+      printIdCard(p,type);
+    }
+
+    function printReceipt(s){
+      modal(`
+        <div class="modal-head no-print"><h3>Receipt</h3><div class="actions"><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn danger" onclick="closeModal()">Close</button></div></div>
+        <div class="receipt print-area">
+          <h1>${state.settings.school_name || "Smart School CRM"}</h1>
+          <p>${state.settings.address || ""}</p>
+          <hr>
+          <h2>Admission / Fee Receipt</h2>
+          <p class="mono">Receipt No: ${uid("REC")}</p>
+          <p>Date: ${today()}</p>
+          <p><b>Student:</b> ${s.name}</p>
+          <p><b>Admission No:</b> ${s.admission_no}</p>
+          <table><tr><th>Fee Type</th><th>Amount</th><th>Paid</th><th>Due</th></tr><tr><td>Admission Fee</td><td>${money(s.admission_fee)}</td><td>${money(s.admission_fee)}</td><td>${money(0)}</td></tr></table>
+          <p style="margin-top:40px">Authorized Signature</p>
+        </div>`);
+    }
+
+    function feesModule(){
+      genericModule("fees");
+    }
+    function attendanceModule(){
+      $("view").innerHTML=`
+        <div class="section-title"><h2>Attendance</h2></div>
+        <div class="card">
+          <div class="form-grid">
+            <div class="field"><label>Class</label><input id="attClass" placeholder="Class"></div>
+            <div class="field"><label>Section</label><input id="attSection" placeholder="Section"></div>
+            <div class="field"><label>Date</label><input type="date" id="attDate" value="${today()}"></div>
+            <div class="field"><label>Filter</label><select><option>Today</option><option>7 days</option><option>15 days</option><option>1 month</option><option>6 months</option><option>1 year</option><option>Lifetime</option><option>Custom date range</option></select></div>
+          </div>
+          <table><thead><tr><th>Student</th><th>Status</th><th>Method</th></tr></thead><tbody>
+            ${state.students.map(s=>`<tr><td>${s.name}</td><td><select id="att-${s.id}"><option>Present</option><option>Absent</option><option>Late</option><option>Leave</option></select></td><td>Manual / QR</td></tr>`).join("")}
+          </tbody></table>
+          <button class="btn primary" onclick="saveAttendance()">Save Attendance</button>
+          <button class="btn" onclick="window.print()">Export PDF</button>
+          <button class="btn" onclick="exportExcel('attendance')">Export Excel</button>
+        </div>`;
+    }
+    async function saveAttendance(){
+      for(const s of state.students){
+        await api("/api/attendance",{method:"POST",body:JSON.stringify({student_id:s.id,date:$("attDate").value,status:$(`att-${s.id}`).value,time:new Date().toLocaleTimeString(),method:"Manual"})});
+      }
+      toast("Thank you, attendance saved.");
+      speak("Thank you, attendance saved.");
+    }
+
+    function examModule(){
+      $("view").innerHTML=`
+        <div class="card">
+          <h3>Exam & Marks</h3>
+          ${toolbar("exam")}
+          <div class="grid panels">
+            <button class="btn primary" onclick="openGenericModal('exam')">Create Exam</button>
+            <button class="btn" onclick="marksEntry()">Subject-wise Marks Entry</button>
+            <button class="btn" onclick="releaseAdmit()">Release Admit Card</button>
+            <button class="btn" onclick="printMarksheet(state.students[0])">Generate Marksheet</button>
+            <button class="btn" onclick="printAdmit(state.students[0])">Generate Admit Card PDF</button>
+            <button class="btn success" onclick="toast('Result published')">Publish Result</button>
+          </div>
+        </div>`;
+      lucide.createIcons();
+    }
+    function marksEntry(){openGenericModal("marks")}
+    function releaseAdmit(){toast("Admit cards released")}
+    function printAdmit(s){
+      if(!s) return toast("No student found");
+      modal(`<div class="modal-head no-print"><h3>Admit Card</h3><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn danger" onclick="closeModal()">Close</button></div>
+      <div class="admit print-area">
+        <h1>${state.settings.school_name || "Smart School CRM"}</h1><p>${state.settings.address || ""}</p><hr>
+        <h2>Admit Card</h2>
+        <p><b>Student:</b> ${s.name}</p><p><b>Class:</b> ${s.class_id || ""} <b>Section:</b> ${s.section_id || ""} <b>Roll:</b> ${s.roll_no || ""}</p>
+        <table><tr><th>Date</th><th>Subject</th><th>Time</th></tr><tr><td>${today()}</td><td>English</td><td>10:00 AM</td></tr><tr><td>${today()}</td><td>Mathematics</td><td>10:00 AM</td></tr></table>
+        <canvas id="admitQR"></canvas><p>Principal Signature</p>
+      </div>`);
+      makeQR("admitQR",s.admission_no || s.id);
+    }
+    function printMarksheet(s){
+      if(!s) return toast("No student found");
+      modal(`<div class="modal-head no-print"><h3>Marksheet</h3><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn danger" onclick="closeModal()">Close</button></div>
+      <div class="marksheet watermark print-area">
+        <h1>${state.settings.school_name || "Smart School CRM"}</h1><h2>Premium Marksheet</h2>
+        <p><b>Student:</b> ${s.name}</p><p><b>Admission:</b> ${s.admission_no}</p>
+        <table><tr><th>Subject</th><th>Max</th><th>Obtained</th><th>Grade</th></tr><tr><td>English</td><td>100</td><td>88</td><td>A</td></tr><tr><td>Math</td><td>100</td><td>91</td><td>A+</td></tr></table>
+        <h3>Total: 179/200 | 89.5% | Result: Pass</h3>
+        <canvas id="marksQR"></canvas><p>Signature / Stamp</p>
+      </div>`);
+      makeQR("marksQR",s.admission_no || s.id);
+    }
+
+    function certificateModule(){
+      $("view").innerHTML=`
+        <div class="card">
+          <h3>Certificate Generator</h3>
+          <div class="form-grid">
+            <div class="field"><label>Certificate Type</label><select id="certType">${["Certificate of Merit","Certificate of Achievement","Certificate of Participation","Bonafide Certificate","Character Certificate","Study Certificate","Transfer Certificate","School Leaving Certificate","No Due Certificate","Fee Clearance Certificate"].map(x=>`<option>${x}</option>`).join("")}</select></div>
+            <div class="field"><label>Student</label><select id="certStudent">${state.students.map(s=>`<option value="${s.id}">${s.name}</option>`).join("")}</select></div>
+            <div class="field"><label>Design</label><select><option>Merit Ribbon</option><option>Classic Official</option><option>Clean Border</option><option>Premium Blue</option></select></div>
+            <div class="field"><label>Color</label><input type="color" value="#2563eb"></div>
+            <div class="field" style="grid-column:1/-1"><label>Editable Certificate Text</label><textarea id="certText">This is to certify that the selected student has successfully completed the required academic criteria.</textarea></div>
+          </div>
+          <button class="btn primary" onclick="generateCertificate()">Generate Certificate</button>
+        </div>`;
+    }
+    function generateCertificate(){
+      const s=state.students.find(x=>x.id===$("certStudent").value) || state.students[0];
+      printCertificate(s,$("certType").value,$("certText").value);
+    }
+    function printCertificate(s,type="Certificate of Achievement",text="This certificate is proudly presented."){
+      if(!s) return toast("No student found");
+      modal(`<div class="modal-head no-print"><h3>Certificate</h3><button class="btn primary" onclick="window.print()">Print / Save PDF</button><button class="btn danger" onclick="closeModal()">Close</button></div>
+      <div class="certificate print-area">
+        <h1>${state.settings.school_name || "Smart School CRM"}</h1>
+        <h2 style="font-size:44px;margin:50px 0">${type}</h2>
+        <p>This certificate is awarded to</p>
+        <h1 style="font-size:52px;color:#2563eb">${s.name}</h1>
+        <p style="font-size:22px;line-height:1.7;max-width:780px;margin:30px auto">${text}</p>
+        <p>Class: ${s.class_id || ""} | Date: ${today()}</p>
+        <canvas id="certQR"></canvas>
+        <p style="margin-top:40px">Class Teacher &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Principal</p>
+      </div>`);
+      makeQR("certQR",s.admission_no || s.id);
+    }
+
+    function publicPortal(){
+      $("view").innerHTML=`
+        <div class="card">
+          <h3>Public Student Portal</h3>
+          <div class="grid quick">
+            <button class="btn primary" onclick="openAdmissionModal()">Admission Form</button>
+            <button class="btn" onclick="publicFee()">Monthly Fee Payment</button>
+            <button class="btn" onclick="publicInquiry()">Inquiry Form</button>
+          </div>
+          <hr>
+          <div class="form-grid">
+            <div class="field"><label>Student ID / Mobile</label><input id="pubId"></div>
+            <div class="field"><label>Password / PIN</label><input id="pubPin" type="password"></div>
+            <div class="field"><label>&nbsp;</label><button class="btn primary" onclick="publicLogin()">Open Student 360</button></div>
+          </div>
+        </div>
+        <div id="publicResult"></div>`;
+      lucide.createIcons();
+    }
+    function publicLogin(){
+      const id=$("pubId").value.toLowerCase(), pin=$("pubPin").value;
+      const s=state.students.find(x=>([x.id,x.admission_no,x.mobile,x.name].join(" ").toLowerCase().includes(id)) && String(x.password_pin||"")==String(pin));
+      if(!s) return toast("Invalid student ID/mobile or PIN");
+      $("publicResult").innerHTML=student360Card(s);
+      makeQR(`qr360-${s.id}`,s.admission_no || s.id);
+    }
+    function publicFee(){toast("Monthly fee payment form ready. Select student from portal login.")}
+    function publicInquiry(){modal(`<div class="modal-head"><h3>Inquiry Form</h3><button class="btn danger" onclick="closeModal()">Close</button></div><form onsubmit="event.preventDefault();closeModal();toast('Inquiry saved')"><div class="form-grid"><div class="field"><label>Name</label><input required></div><div class="field"><label>Mobile</label><input required></div><div class="field"><label>Class</label><input></div><div class="field" style="grid-column:1/-1"><label>Message</label><textarea></textarea></div></div><button class="btn primary">Submit</button></form>`)}
+    function readyWhatsApp(number,msg){
+      const url=`https://wa.me/91${String(number||"").replace(/\D/g,"").slice(-10)}?text=${encodeURIComponent(msg)}`;
+      window.open(url,"_blank");
+    }
+
+    function oldDataModule(){
+      $("view").innerHTML=`
+        <div class="card">
+          <h3>Old Data Upload</h3>
+          <div class="form-grid">
+            <div class="field"><label>Data Type</label><select id="oldType">${["Students","Teachers/staff","Attendance","Fees","Exam/marks","Library","Transport","Hostel","Payroll","Leaves","Certificates","Receipts"].map(x=>`<option>${x}</option>`).join("")}</select></div>
+            <div class="field"><label>Upload CSV/JSON</label><input type="file" id="oldFile" accept=".csv,.json" onchange="previewOldFile(event)"></div>
+            <div class="field"><label>Paste CSV/JSON</label><textarea id="oldPaste" oninput="previewOldPaste()"></textarea></div>
+          </div>
+          <button class="btn primary" onclick="importOldData()">Import</button>
+        </div>
+        <div class="card"><h3>Preview</h3><pre id="oldPreview" style="white-space:pre-wrap"></pre></div>
+        <div class="card"><h3>Import History</h3><table><thead><tr><th>Date</th><th>Data Type</th><th>Record Count</th><th>Uploaded By</th></tr></thead><tbody id="oldHistory"></tbody></table></div>`;
+    }
+    let oldRows=[];
+    function parseCSV(text){
+      const lines=text.trim().split(/\r?\n/); const headers=lines.shift().split(",").map(x=>x.trim());
+      return lines.map(line=>Object.fromEntries(line.split(",").map((v,i)=>[headers[i],v.trim()])));
+    }
+    function previewOldFile(e){
+      const f=e.target.files[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=()=>{previewOldText(r.result)};
+      r.readAsText(f);
+    }
+    function previewOldPaste(){previewOldText($("oldPaste").value)}
+    function previewOldText(t){
+      if(!t.trim()) return;
+      try{oldRows=t.trim().startsWith("[")?JSON.parse(t):parseCSV(t);$("oldPreview").textContent=JSON.stringify(oldRows.slice(0,5),null,2)}
+      catch(e){$("oldPreview").textContent="Invalid CSV/JSON"}
+    }
+    async function importOldData(){
+      await api("/api/old-data-upload",{method:"POST",body:JSON.stringify({data_type:$("oldType").value,records:oldRows})});
+      $("oldHistory").innerHTML+=`<tr><td>${today()}</td><td>${$("oldType").value}</td><td>${oldRows.length}</td><td>${state.user.email}</td></tr>`;
+      toast("Old data imported");
+    }
+
+    function settingsModule(){
+      const s=state.settings;
+      $("view").innerHTML=`
+        <div class="card">
+          <h3>Settings</h3>
+          <form onsubmit="saveSettings(event)">
+            <div class="form-grid">
+              ${[
+                ["school_name","School name"],["address","Address"],["phone","Phone"],["email","Email"],["website","Website"],["session","Session"],["principal_name","Principal name"],["upi_id","UPI ID"],["razorpay_key_id","Razorpay key ID"],["supabase_url","Supabase URL"]
+              ].map(f=>`<div class="field"><label>${f[1]}</label><input name="${f[0]}" value="${s[f[0]] || ""}"></div>`).join("")}
+              <div class="field"><label>Voice ON/OFF</label><select name="voice_enabled"><option value="true" ${s.voice_enabled?"selected":""}>ON</option><option value="false" ${!s.voice_enabled?"selected":""}>OFF</option></select></div>
+              <div class="field"><label>Payment Gateway</label><select name="payment_gateway_enabled"><option value="true" ${s.payment_gateway_enabled?"selected":""}>Enabled</option><option value="false" ${!s.payment_gateway_enabled?"selected":""}>Disabled</option></select></div>
+              <div class="field"><label>Public Portal</label><select name="public_portal_enabled"><option value="true" ${s.public_portal_enabled?"selected":""}>Enabled</option><option value="false" ${!s.public_portal_enabled?"selected":""}>Disabled</option></select></div>
+              ${["logo","signature","stamp","upi_qr"].map(x=>`<div class="field"><label>${x} upload</label><input type="file" accept="image/*" onchange="settingImage(event,'${x}')"><input type="hidden" name="${x}" id="${x}" value="${s[x] || ""}"></div>`).join("")}
+            </div>
+            <button class="btn primary">Save Settings</button>
+          </form>
+        </div>`;
+    }
+    function settingImage(e,key){
+      const f=e.target.files[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=()=>$(key).value=r.result;
+      r.readAsDataURL(f);
+    }
+    async function saveSettings(e){
+      e.preventDefault();
+      const p=Object.fromEntries(new FormData(e.target).entries());
+      p.voice_enabled=p.voice_enabled==="true";
+      p.payment_gateway_enabled=p.payment_gateway_enabled==="true";
+      p.public_portal_enabled=p.public_portal_enabled==="true";
+      const res=await api("/api/settings",{method:"PUT",body:JSON.stringify(p)});
+      state.settings={...state.settings,...res.data};
+      toast("Settings saved");
+    }
+    function accountModule(){
+      const used=JSON.stringify(localStorage).length/1024/1024;
+      const limit=Number(state.settings.storage_limit_mb || 100);
+      const pct=Math.round((used/limit)*100);
+      $("view").innerHTML=`
+        <div class="card">
+          <h3>Account / Storage</h3>
+          <p><b>Logged in:</b> ${state.user.email}</p>
+          <p><b>Role:</b> ${state.user.role}</p>
+          <p><b>Used Storage:</b> ${used.toFixed(2)} MB / ${limit} MB (${pct}%)</p>
+          <progress value="${pct}" max="100" style="width:100%"></progress>
+          ${pct>=80?`<p style="color:red;font-weight:800">Storage warning: 80% reached.</p>`:""}
+          <div class="actions"><button class="btn" onclick="exportExcel('backup')">Backup/export data</button><button class="btn" onclick="toast('Forgot ID/password search ready')">Forgot ID/password search</button></div>
+        </div>`;
+    }
+
+    window.addEventListener("DOMContentLoaded",()=>{render();});
+  </script>
+</body>
+</html>
